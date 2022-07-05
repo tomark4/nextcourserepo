@@ -1,6 +1,11 @@
-import React from 'react'
+import { FC, ReactNode } from 'react'
 
-const DarkLayout = ({children}:any) => {
+
+type Props = {
+    children?: ReactNode
+};
+
+const DarkLayout: FC<Props> = ({children}) => {
     return (
         <div style={{ background: 'rgba(0,0,0,0.3)', padding: "10px", borderRadius: "5px" }}>
             <h3>Dark layout</h3>

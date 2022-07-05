@@ -6,7 +6,9 @@ const MENU_ITEMS = [
     {id: '2', text: 'About', href: '/about'},
     {id: '3', text: 'Contact', href: '/contact'},
     {id: '4', text: 'Pricing', href: '/pricing'},
-]
+];
+
+
 const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -26,6 +28,7 @@ const Navbar = () => {
                         </li>
                     ))}
                 </ul>
+                
             </div>
         </div>
     </nav>

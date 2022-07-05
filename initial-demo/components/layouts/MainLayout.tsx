@@ -1,8 +1,13 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import Navbar from '../Navbar';
+import { FC, ReactNode } from 'react'
 
-const MainLayout = ({children}:any) => {
+type Props = {
+    children?: ReactNode
+};
+
+const MainLayout:FC<Props> = ({children}) => {
     
     return (
         <>
