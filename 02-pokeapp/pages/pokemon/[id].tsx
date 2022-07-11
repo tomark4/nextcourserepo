@@ -1,20 +1,34 @@
 import { Button, Card, Container, Grid, Image, Text } from "@nextui-org/react";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
-import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Layout } from "../../componets/layouts";
 import pokeApi from "../../data/api";
 import { Pokemon } from "../../interfaces/pokemon.interface";
+import {
+  findInfavorite,
+  toogleFavorite,
+} from "../../utils/local-storage-favorites";
 
 type Props = {
   pokemon: Pokemon;
 };
 
 const PokemonDetail: NextPage<Props> = ({ pokemon }) => {
-  const router = useRouter();
+  const [exist, setExist] = useState(false);
+
+  useEffect(() => {
+    setExist(findInfavorite(pokemon.id));
+  }, []);
+  
+  const onToogleFavorite = () => {
+    toogleFavorite(pokemon.id);
+    setExist(!exist);
+  };
+
+  // here doesn't exists window, localstorage, etc, del lado del server
 
   return (
-    <Layout title="Some pokemon">
+    <Layout title={pokemon.name}>
       <Grid.Container css={{ marginTop: "5px" }} gap={2}>
         <Grid xs={12} sm={4}>
           <Card isHoverable>
@@ -39,8 +53,12 @@ const PokemonDetail: NextPage<Props> = ({ pokemon }) => {
               <Text h1 transform="capitalize">
                 {pokemon.name}
               </Text>
-              <Button color="gradient" ghost>
-                Guardar en favoritos
+              <Button
+                color="gradient"
+                ghost={!exist}
+                onClick={onToogleFavorite}
+              >
+                {exist ? "En favoritos" : "Guardar en favoritos"}
               </Button>
             </Card.Header>
             <Card.Body>
