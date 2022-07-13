@@ -35,8 +35,8 @@ const Navbar = () => {
       </NextLink>
 
       <Spacer css={{ flex: 1 }} />
-      <NextLink href="favorites">
-        <Link css={{ marginRight: '10px'}}>
+      <NextLink href="/favorites">
+        <Link css={{ marginRight: "10px" }}>
           <Text color="white">Favoritos</Text>
         </Link>
       </NextLink>

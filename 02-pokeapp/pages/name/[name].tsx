@@ -9,12 +9,13 @@ import {
   toogleFavorite,
 } from "../../utils/local-storage-favorites";
 import confetti from "canvas-confetti";
+import { PokemonApiResponse } from "../../interfaces/pokeapi.interface";
 
 type Props = {
   pokemon: Pokemon;
 };
 
-const PokemonDetail: NextPage<Props> = ({ pokemon }) => {
+const PokemonByNamePage: NextPage<Props> = ({ pokemon }) => {
   const [exist, setExist] = useState(false);
 
   useEffect(() => {
@@ -112,24 +113,27 @@ const PokemonDetail: NextPage<Props> = ({ pokemon }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async (ctx) => {
-  const data = [...Array(151)].map((value, index) => `${index + 1}`);
+  const { data } = await pokeApi.get<PokemonApiResponse>(`/pokemon?limit=151`);
+
+  const pokemonNames: string[] = data.results.map((poke) => poke.name);
 
   return {
-    paths: data.map((item) => ({
-      params: { id: item },
+    paths: pokemonNames.map((name) => ({
+      params: { name },
     })),
     fallback: false,
   };
 };
+
 // propiedades statics que se generan en la hora del build
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { id } = params as { id: string };
+  const { name } = params as { name: string };
 
-  const { data } = await pokeApi.get<Pokemon>(`/pokemon/${id}`);
+  const { data } = await pokeApi.get<Pokemon>(`/pokemon/${name}`);
 
   return {
     props: { pokemon: data },
   };
 };
 
-export default PokemonDetail;
+export default PokemonByNamePage;
