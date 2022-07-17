@@ -118,15 +118,28 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
     paths: data.map((item) => ({
       params: { id: item },
     })),
-    fallback: false,
+    // fallback: false,
+    fallback: "blocking",
   };
 };
+
 // propiedades statics que se generan en la hora del build
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { id } = params as { id: string };
+  const pokemon = await getPokemonInfo(id);
+
+  if (!pokemon) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
 
   return {
-    props: { pokemon: await getPokemonInfo(id) },
+    props: { pokemon },
+    revalidate: 86400, // seconds 60  * 60 *24 cada 24 horas
   };
 };
 
