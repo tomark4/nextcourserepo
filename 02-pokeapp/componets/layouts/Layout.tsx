@@ -1,29 +1,32 @@
-import Head from 'next/head'
-import React, { PropsWithChildren, FC, ReactNode } from 'react'
-import Navbar from '../ui/Navbar'
+import Head from "next/head";
+import React, { PropsWithChildren, FC, ReactNode } from "react";
+import Navbar from "../ui/Navbar";
 
 type Props = {
-    title?: string
-    children?: ReactNode
-}
+  title?: string;
+  children?: ReactNode;
+};
 
-export const Layout: FC<PropsWithChildren<Props>> = ({title, children}) => {
-    return (
-      <>
-        <Head>
-            <title>{title || "Pokedex"}</title>
-            <meta name="author" content="Jose" />
-            <meta name="description" content="Poke app" />
-            <meta name="keywords" content="nextjs, poke, pokedex" />
-        </Head>
+const origin = typeof window === "undefined" ? "" : window.location.origin;
 
-        <Navbar />
+export const Layout: FC<PropsWithChildren<Props>> = ({ title, children }) => {
+  return (
+    <>
+      <Head>
+        <title>{title || "Pokedex"}</title>
+        <meta name="author" content="Jose" />
+        <meta name="description" content="Poke app" />
+        <meta name="keywords" content="nextjs, poke, pokedex" />
+        <meta property="og:title" content={`Info ${title}`} />
+        <meta property="og:description" content="Pokemon app info." />
+        <meta property="og:image" content={`${origin}/banner.png`} />
+      </Head>
 
-        <main className="content">
-            {children}
-        </main>
+      <Navbar />
 
-        <footer></footer>
-      </>
-    )
-}
+      <main className="content">{children}</main>
+
+      <footer></footer>
+    </>
+  );
+};

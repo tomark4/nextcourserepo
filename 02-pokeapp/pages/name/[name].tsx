@@ -10,6 +10,7 @@ import {
 } from "../../utils/local-storage-favorites";
 import confetti from "canvas-confetti";
 import { PokemonApiResponse } from "../../interfaces/pokeapi.interface";
+import { getPokemonInfo } from "../../utils/get-pokemon-info";
 
 type Props = {
   pokemon: Pokemon;
@@ -20,7 +21,7 @@ const PokemonByNamePage: NextPage<Props> = ({ pokemon }) => {
 
   useEffect(() => {
     setExist(findInfavorite(pokemon.id));
-  }, []);
+  }, [pokemon.id]);
 
   const onToogleFavorite = () => {
     toogleFavorite(pokemon.id);
@@ -129,10 +130,8 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { name } = params as { name: string };
 
-  const { data } = await pokeApi.get<Pokemon>(`/pokemon/${name}`);
-
   return {
-    props: { pokemon: data },
+    props: { pokemon: await getPokemonInfo(name) },
   };
 };
 
