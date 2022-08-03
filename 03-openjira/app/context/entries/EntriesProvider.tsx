@@ -1,7 +1,7 @@
 import React, { useReducer } from "react";
 import entriesReducer from "./entriesReducer";
 import EntriesContext from "./EntriesContext";
-import { Entry } from "../../../interfaces/entry.interface";
+import { Entry } from "../../interfaces/entry.interface";
 import { v4 as uuidv4 } from "uuid";
 
 export interface EntriesState {

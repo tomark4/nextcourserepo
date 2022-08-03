@@ -3,8 +3,8 @@ import type { AppProps } from "next/app";
 import { ThemeProvider } from "@emotion/react";
 import { CssBaseline } from "@mui/material";
 import { lightTheme } from "../themes/light-theme";
-import UiProvider from "./context/ui/UiProvider";
-import EntriesProvider from "./context/entries/EntriesProvider";
+import UiProvider from "../context/ui/UiProvider";
+import EntriesProvider from "../context/entries/EntriesProvider";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

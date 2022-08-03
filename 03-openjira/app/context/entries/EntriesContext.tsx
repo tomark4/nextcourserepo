@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { Entry } from "../../../interfaces/entry.interface";
+import { Entry } from "../../interfaces/entry.interface";
 
 interface EntriesContextProps {
   entries: Entry[];
