@@ -12,19 +12,19 @@ const initialState: EntriesState = {
   entries: [
     {
       _id: uuidv4(),
-      description: "lorem ipsum 1",
+      description: "pendiente: lorem ipsum 1",
       createdAT: Date.now(),
       status: "pending",
     },
     {
       _id: uuidv4(),
-      description: "lorem ipsum 2",
+      description: "in progress: lorem ipsum 2",
       createdAT: Date.now(),
       status: "in-progress",
     },
     {
       _id: uuidv4(),
-      description: "lorem ipsum 3",
+      description: "finish: lorem ipsum 3",
       createdAT: Date.now(),
       status: "finish",
     },
@@ -34,10 +34,21 @@ const initialState: EntriesState = {
 const EntriesProvider = ({ children }: any) => {
   const [state, dispatch] = useReducer(entriesReducer, initialState);
 
+  const addNewEntry = (description: string) => {
+    const newEntry: Entry = {
+      _id: uuidv4(),
+      description,
+      createdAT: Date.now(),
+      status: "pending",
+    };
+    dispatch({ type: "[Entry] - AddEntry", payload: newEntry });
+  };
+
   return (
     <EntriesContext.Provider
       value={{
         ...state,
+        addNewEntry,
       }}
     >
       {children}

@@ -2,6 +2,7 @@ import { CardHeader, Grid, Card, CardContent } from "@mui/material";
 import type { NextPage } from "next";
 import Layout from "../components/layouts/Layout";
 import EntryList from "../components/ui/EntryList";
+import NewEntry from "../components/ui/NewEntry";
 
 const Home: NextPage = () => {
   return (
@@ -10,21 +11,22 @@ const Home: NextPage = () => {
         <Grid item xs={12} sm={4}>
           <Card sx={{ height: "calc(100vh - 100px)" }}>
             <CardHeader title="Pendientes" />
-              {/*  TODO: Agregar una nueva tareas */}
-              {/*  TODO: Listar las tareas */}
-              <EntryList />
+            {/*  TODO: Agregar una nueva tareas */}
+            <NewEntry />
+            {/*  TODO: Listar las tareas */}
+            <EntryList status="pending" />
           </Card>
         </Grid>
         <Grid item xs={12} sm={4}>
           <Card sx={{ height: "calc(100vh - 100px)" }}>
             <CardHeader title="En progreso" />
-            <EntryList />
+            <EntryList status="in-progress" />
           </Card>
         </Grid>
         <Grid item xs={12} sm={4}>
           <Card sx={{ height: "calc(100vh - 100px)" }}>
             <CardHeader title="Completadas" />
-            <EntryList />
+            <EntryList status="finish" />
           </Card>
         </Grid>
       </Grid>
