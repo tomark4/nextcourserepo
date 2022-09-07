@@ -11,8 +11,8 @@ interface Props {
 }
 
 const EntryList = ({ status }: Props) => {
-  const { entries } = useContext(EntriesContext);
-  const { isDragging } = useContext(UiContext);
+  const { entries, updateEntry } = useContext(EntriesContext);
+  const { isDragging, endDragging } = useContext(UiContext);
 
   const allowDrop = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -25,7 +25,11 @@ const EntryList = ({ status }: Props) => {
 
   const handleOnDrop = (event: DragEvent<HTMLDivElement>) => {
     const id = event.dataTransfer.getData("text");
-    console.log("id", id);
+    const entry = entries.find((e) => e._id === id);
+    if (entry) {
+      updateEntry({ ...entry, status });
+    }
+    endDragging();
   };
 
   return (
