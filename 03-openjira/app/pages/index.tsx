@@ -11,9 +11,7 @@ const Home: NextPage = () => {
         <Grid item xs={12} sm={4}>
           <Card sx={{ height: "calc(100vh - 100px)" }}>
             <CardHeader title="Pendientes" />
-            {/*  TODO: Agregar una nueva tareas */}
             <NewEntry />
-            {/*  TODO: Listar las tareas */}
             <EntryList status="pending" />
           </Card>
         </Grid>
