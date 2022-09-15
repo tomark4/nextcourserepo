@@ -9,26 +9,7 @@ export interface EntriesState {
 }
 
 const initialState: EntriesState = {
-  entries: [
-    {
-      _id: uuidv4(),
-      description: "pendiente: lorem ipsum 1",
-      createdAT: Date.now(),
-      status: "pending",
-    },
-    {
-      _id: uuidv4(),
-      description: "in progress: lorem ipsum 2",
-      createdAT: Date.now(),
-      status: "in-progress",
-    },
-    {
-      _id: uuidv4(),
-      description: "finish: lorem ipsum 3",
-      createdAT: Date.now(),
-      status: "finish",
-    },
-  ],
+  entries: [],
 };
 
 const EntriesProvider = ({ children }: any) => {
@@ -38,7 +19,7 @@ const EntriesProvider = ({ children }: any) => {
     const newEntry: Entry = {
       _id: uuidv4(),
       description,
-      createdAT: Date.now(),
+      createdAt: Date.now(),
       status: "pending",
     };
     dispatch({ type: "[Entry] - AddEntry", payload: newEntry });

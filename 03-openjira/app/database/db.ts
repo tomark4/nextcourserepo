@@ -35,6 +35,7 @@ const db = {
     console.log("Conectado a mongo", process.env.MONGO_URI);
   },
   disconnect: async () => {
+    if (process.env.NODE_ENV === "development") return;
     if (mongoConnection.isConnected === 0) return;
     await mongoose.disconnect();
     console.log("Desconectado");
