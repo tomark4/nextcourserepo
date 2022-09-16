@@ -16,6 +16,9 @@ export default function handler(
   }
 
   switch (req.method) {
+    case "GET":
+      return getEntryById(id, res);
+
     case "PUT":
       return updateEntry(id, req, res);
 
@@ -23,6 +26,24 @@ export default function handler(
       return res.status(400).json({ message: "method doesn't exist' " });
   }
 }
+
+const getEntryById = async (id: any, res: NextApiResponse<Data>) => {
+  await db.connect();
+  try {
+    const entry = await EntryModel.findById(id);
+
+    if (!entry) {
+      return res.status(400).json({ message: "Id not found" });
+    }
+
+    await db.disconnect();
+
+    return res.status(200).json(entry);
+  } catch (e) {
+    await db.disconnect();
+    return res.status(500).json({ message: "There was an error" });
+  }
+};
 
 const updateEntry = async (
   id: any,
