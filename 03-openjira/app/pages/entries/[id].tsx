@@ -15,16 +15,25 @@ import {
   capitalize,
   IconButton,
 } from "@mui/material";
-import React, { ChangeEvent, useState } from "react";
+import { GetServerSideProps } from "next";
+import React, { ChangeEvent, FC, useMemo, useState } from "react";
 import Layout from "../../components/layouts/Layout";
 import { EntryStatus } from "../../interfaces/entry.interface";
+import { isValidObjectId } from "mongoose";
 
 const validStatus: EntryStatus[] = ["pending", "in-progress", "finish"];
 
-const EntryPage = () => {
+interface Props {}
+
+const EntryPage: FC<Props> = (props) => {
   const [inputValue, setInputValue] = useState("");
   const [status, setStatus] = useState<EntryStatus>("pending");
-  const [touched, setTouched] = useState<EntryStatus>();
+  const [touched, setTouched] = useState(false);
+
+  const isNotValid = useMemo(
+    () => inputValue.length <= 0 && touched,
+    [touched, inputValue]
+  );
 
   const onInputValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -57,6 +66,9 @@ const EntryPage = () => {
                 label="Nueva entrada"
                 value={inputValue}
                 onChange={onInputValueChange}
+                helperText={isNotValid && "Ingresa un valor"}
+                onBlur={() => setTouched(true)}
+                error={isNotValid}
               />
 
               <FormControl>
@@ -84,6 +96,7 @@ const EntryPage = () => {
                   startIcon={<SaveOutlined />}
                   variant="contained"
                   fullWidth
+                  disabled={inputValue.length <= 0}
                 >
                   Save
                 </Button>
@@ -106,6 +119,25 @@ const EntryPage = () => {
       </IconButton>
     </Layout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const { id } = params as { id: string };
+
+  if (!isValidObjectId(id)) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      id,
+    },
+  };
 };
 
 export default EntryPage;
