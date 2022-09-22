@@ -5,17 +5,20 @@ import { CssBaseline } from "@mui/material";
 import { lightTheme } from "../themes/light-theme";
 import UiProvider from "../context/ui/UiProvider";
 import EntriesProvider from "../context/entries/EntriesProvider";
+import { SnackbarProvider } from "notistack";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <EntriesProvider>
-      <ThemeProvider theme={lightTheme}>
-        <CssBaseline />
-        <UiProvider>
-          <Component {...pageProps} />
-        </UiProvider>
-      </ThemeProvider>
-    </EntriesProvider>
+    <SnackbarProvider maxSnack={3}>
+      <EntriesProvider>
+        <ThemeProvider theme={lightTheme}>
+          <CssBaseline />
+          <UiProvider>
+            <Component {...pageProps} />
+          </UiProvider>
+        </ThemeProvider>
+      </EntriesProvider>
+    </SnackbarProvider>
   );
 }
 

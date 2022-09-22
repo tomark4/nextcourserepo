@@ -9,6 +9,7 @@ import { Entry } from "../../interfaces/entry.interface";
 import { DragEvent, useContext } from "react";
 import UiContext from "../../context/ui/UiContext";
 import { useRouter } from "next/router";
+import { getFormatDistanceToNow } from "../../utils/dateFunctions";
 
 interface Props {
   entry: Entry;
@@ -50,7 +51,9 @@ const EntryCard = ({ entry }: Props) => {
         <CardActions
           sx={{ display: "flex", justifyContent: "end", paddingRight: 2 }}
         >
-          <Typography variant="body2">hace 30 minutos</Typography>
+          <Typography variant="body2">
+            Hace {getFormatDistanceToNow(entry.createdAt)}
+          </Typography>
         </CardActions>
       </CardActionArea>
     </Card>

@@ -16,19 +16,26 @@ import {
   IconButton,
 } from "@mui/material";
 import { GetServerSideProps } from "next";
-import React, { ChangeEvent, FC, useMemo, useState } from "react";
+import React, { ChangeEvent, FC, useContext, useMemo, useState } from "react";
 import Layout from "../../components/layouts/Layout";
-import { EntryStatus } from "../../interfaces/entry.interface";
-import { isValidObjectId } from "mongoose";
+import { Entry, EntryStatus } from "../../interfaces/entry.interface";
+import { getEntryById } from "../../database/db-entries";
+import EntriesContext from "../../context/entries/EntriesContext";
+import { useSnackbar } from "notistack";
+import { getFormatDistanceToNow } from "../../utils/dateFunctions";
 
 const validStatus: EntryStatus[] = ["pending", "in-progress", "finish"];
 
-interface Props {}
+interface Props {
+  entry: Entry;
+}
 
-const EntryPage: FC<Props> = (props) => {
-  const [inputValue, setInputValue] = useState("");
-  const [status, setStatus] = useState<EntryStatus>("pending");
+const EntryPage: FC<Props> = ({ entry }) => {
+  const [inputValue, setInputValue] = useState(entry.description);
+  const [status, setStatus] = useState<EntryStatus>(entry.status);
   const [touched, setTouched] = useState(false);
+  const { updateEntry } = useContext(EntriesContext);
+  const { enqueueSnackbar } = useSnackbar();
 
   const isNotValid = useMemo(
     () => inputValue.length <= 0 && touched,
@@ -44,17 +51,32 @@ const EntryPage: FC<Props> = (props) => {
   };
 
   const handleSave = () => {
-    console.log({ inputValue, status });
+    if (inputValue.trim().length === 0) return;
+
+    const entryUpdated: Entry = {
+      ...entry,
+      description: inputValue,
+      status,
+    };
+    updateEntry(entryUpdated);
+
+    enqueueSnackbar("Entry updated!", {
+      variant: "success",
+      autoHideDuration: 800,
+      anchorOrigin: { vertical: "top", horizontal: "right" },
+    });
   };
 
   return (
-    <Layout>
+    <Layout title={inputValue.substring(0, 20) + "..."}>
       <Grid container justifyContent="center" sx={{ marginTop: 2 }}>
         <Grid item xs={12} sm={8} md={6}>
           <Card>
             <CardHeader
               title={`Entrada: ${inputValue}`}
-              subheader={`Creada hace n minutos`}
+              subheader={`Creada hace ${getFormatDistanceToNow(
+                entry.createdAt
+              )}`}
             />
             <CardContent>
               <TextField
@@ -124,7 +146,9 @@ const EntryPage: FC<Props> = (props) => {
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { id } = params as { id: string };
 
-  if (!isValidObjectId(id)) {
+  const entry = await getEntryById(id);
+
+  if (!entry) {
     return {
       redirect: {
         destination: "/",
@@ -135,7 +159,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   return {
     props: {
-      id,
+      entry,
     },
   };
 };
