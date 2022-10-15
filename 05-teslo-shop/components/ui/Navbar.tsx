@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import NextLink from "next/link";
 import React from "react";
+import { SideMenu } from "./";
 
 const Navbar = () => {
   return (
@@ -59,7 +60,7 @@ const Navbar = () => {
           </Link>
         </NextLink>
 
-        <Button>Menu</Button>
+        <Button>menu</Button>
       </Toolbar>
     </AppBar>
   );

@@ -1,3 +1,1 @@
-import ShopLayout from "./ShopLayout";
-
-export { ShopLayout };
+export { default as ShopLayout } from "./ShopLayout";
