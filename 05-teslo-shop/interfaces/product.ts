@@ -14,3 +14,5 @@ export interface Product {
 
 export type ValidSize = "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL";
 export type ValidType = "shirts" | "pants" | "hoodies" | "hats";
+
+// TODO: agregar created and updated at
