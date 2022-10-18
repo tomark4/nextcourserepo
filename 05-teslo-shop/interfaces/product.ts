@@ -10,9 +10,9 @@ export interface Product {
   title: string;
   type: ValidType;
   gender: "men" | "women" | "kid" | "unisex";
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type ValidSize = "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL";
 export type ValidType = "shirts" | "pants" | "hoodies" | "hats";
-
-// TODO: agregar created and updated at

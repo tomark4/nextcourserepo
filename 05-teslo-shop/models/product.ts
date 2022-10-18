@@ -24,14 +24,14 @@ export const productSchema = new Schema(
     },
     gender: {
       type: String,
-      enum: { values: ["men", "women", "kids", "unisex"] },
+      enum: { values: ["men", "women", "kid", "unisex"] },
       message: "{VALUE} no es un género permitido",
     },
   },
   { timestamps: true }
 );
 
-// TODO: crear indice
+productSchema.index({ title: "text", tags: "text" });
 
 const Product: Model<Product> =
   mongoose.models.Product || model("Product", productSchema);
