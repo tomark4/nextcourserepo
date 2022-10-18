@@ -35,7 +35,9 @@ async function searchProduct(req: NextApiRequest, res: NextApiResponse<Data>) {
   try {
     const products = await ProductModel.find({
       $text: { $search: q },
-    }).lean();
+    })
+      .select("title images price inStock slug -_id")
+      .lean();
     await db.disconnect();
     return res.json(products);
   } catch (e) {
