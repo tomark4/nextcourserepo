@@ -23,12 +23,24 @@ import {
   SearchOutlined,
   VpnKeyOutlined,
 } from "@mui/icons-material";
+import { useRouter } from "next/router";
+import { useContext } from "react";
+import { UiContext } from "../../context";
 
 const SideMenu = () => {
+  const { isMenuOpen, toogleSideMenu } = useContext(UiContext);
+  const router = useRouter();
+
+  const navigateTo = (path: string) => {
+    toogleSideMenu();
+    router.push(path);
+  };
+
   return (
     <Drawer
-      open={false}
+      open={isMenuOpen}
       anchor="right"
+      onClose={toogleSideMenu}
       sx={{ backdropFilter: "blur(4px)", transition: "all 0.5s ease-out" }}
     >
       <Box sx={{ width: 250, paddingTop: 5 }}>
@@ -65,21 +77,30 @@ const SideMenu = () => {
             <ListItemIcon>
               <MaleOutlined />
             </ListItemIcon>
-            <ListItemText primary={"Hombres"} />
+            <ListItemText
+              primary={"Hombres"}
+              onClick={() => navigateTo("/category/men")}
+            />
           </ListItem>
 
           <ListItem button sx={{ display: { xs: "", sm: "none" } }}>
             <ListItemIcon>
               <FemaleOutlined />
             </ListItemIcon>
-            <ListItemText primary={"Mujeres"} />
+            <ListItemText
+              primary={"Mujeres"}
+              onClick={() => navigateTo("/category/women")}
+            />
           </ListItem>
 
           <ListItem button sx={{ display: { xs: "", sm: "none" } }}>
             <ListItemIcon>
               <EscalatorWarningOutlined />
             </ListItemIcon>
-            <ListItemText primary={"Niños"} />
+            <ListItemText
+              primary={"Niños"}
+              onClick={() => navigateTo("/category/kids")}
+            />
           </ListItem>
 
           <ListItem button>

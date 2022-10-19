@@ -11,10 +11,12 @@ import {
 } from "@mui/material";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useContext } from "react";
+import { UiContext } from "../../context";
 
 const Navbar = () => {
   const { asPath } = useRouter();
+  const { toogleSideMenu } = useContext(UiContext);
 
   return (
     <AppBar>
@@ -77,7 +79,7 @@ const Navbar = () => {
           </Link>
         </NextLink>
 
-        <Button>menu</Button>
+        <Button onClick={toogleSideMenu}>menu</Button>
       </Toolbar>
     </AppBar>
   );
