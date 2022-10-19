@@ -1,19 +1,21 @@
 import { SearchOutlined, ShoppingCartOutlined } from "@mui/icons-material";
 import {
-  AppBar,
   Button,
   Link,
-  Toolbar,
   Typography,
   Box,
+  AppBar,
+  Toolbar,
   IconButton,
   Badge,
 } from "@mui/material";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
-import { SideMenu } from "./";
 
 const Navbar = () => {
+  const { asPath } = useRouter();
+
   return (
     <AppBar>
       <Toolbar>
@@ -29,17 +31,32 @@ const Navbar = () => {
         <Box sx={{ display: { xs: "none", sm: "block" } }}>
           <NextLink href="/category/men" passHref>
             <Link>
-              <Button>Hombres</Button>
+              <Button
+                sx={{ borderRadius: "5px" }}
+                color={asPath === "/category/men" ? "secondary" : "primary"}
+              >
+                Hombres
+              </Button>
             </Link>
           </NextLink>
           <NextLink href="/category/women" passHref>
             <Link>
-              <Button>Mujeres</Button>
+              <Button
+                sx={{ borderRadius: "5px" }}
+                color={asPath === "/category/women" ? "secondary" : "primary"}
+              >
+                Mujeres
+              </Button>
             </Link>
           </NextLink>
           <NextLink href="/category/kids" passHref>
             <Link>
-              <Button>Niños</Button>
+              <Button
+                sx={{ borderRadius: "5px" }}
+                color={asPath === "/category/kids" ? "secondary" : "primary"}
+              >
+                Niños
+              </Button>
             </Link>
           </NextLink>
         </Box>
