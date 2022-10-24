@@ -1,14 +1,19 @@
 import { Button, Chip, Grid, Typography } from "@mui/material";
 import { Box } from "@mui/system";
+import { GetServerSideProps, GetStaticProps, NextPage } from "next";
 import React from "react";
 import { ShopLayout } from "../../components/layouts";
-import { initialData } from "../../database/products";
 import { ProductSlideShow, SizeSelector } from "../../components/products/";
 import { ItemCounter } from "../../components/ui";
+import { db, dbProducts } from "../../database";
+import { Product } from "../../interfaces";
+import { getAllProductsSlugs } from "../../database/db-products";
 
-const product = initialData.products[0];
+interface Props {
+  product: Product;
+}
 
-const ProductDetailPage = () => {
+const ProductDetailPage: NextPage<Props> = ({ product }) => {
   return (
     <ShopLayout title={product.title} pageDescription={product.description}>
       <Grid container spacing={3}>
@@ -48,6 +53,61 @@ const ProductDetailPage = () => {
       </Grid>
     </ShopLayout>
   );
+};
+
+// export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+//   const { slug } = params as { slug: string };
+
+//   const product = await dbProducts.getProductBySlug(slug);
+
+//   if (!product) {
+//     return {
+//       redirect: {
+//         destination: "/",
+//         permanent: false,
+//       },
+//     };
+//   }
+
+//   return {
+//     props: {
+//       product,
+//     },
+//   };
+// };
+
+export const getStaticPaths = async (ctx: any) => {
+  const productsSlugs = await dbProducts.getAllProductsSlugs();
+
+  return {
+    paths: productsSlugs.map(({ slug }) => ({
+      params: {
+        slug,
+      },
+    })),
+    fallback: "blocking",
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const { slug = "" } = params as { slug: string };
+  const product = await dbProducts.getProductBySlug(slug);
+
+  if (!product) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      product,
+    },
+    revalidate: 60 * 60 * 24,
+  };
 };
 
 export default ProductDetailPage;
