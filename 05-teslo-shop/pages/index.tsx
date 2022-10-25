@@ -9,7 +9,13 @@ const Home: NextPage = () => {
   const { products, isLoading } = useProducts("/products");
 
   return (
-    <ShopLayout title="lorem ipsum" pageDescription="lorem ipsum">
+    <ShopLayout
+      title="Teslo shop"
+      pageDescription="The best ever online store in the world"
+    >
+      <Typography variant="h1" component="h1" sx={{ mb: 1 }}>
+        Tienda
+      </Typography>
       <Typography variant="h2" sx={{ mb: 1 }}>
         Todos los productos
       </Typography>
