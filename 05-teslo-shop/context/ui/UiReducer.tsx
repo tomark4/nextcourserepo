@@ -1,4 +1,4 @@
-import { UiState } from "./";
+import { UiState } from "./UiProvider";
 
 type UiActionType = { type: "UI_TOOGLE_MENU" };
 

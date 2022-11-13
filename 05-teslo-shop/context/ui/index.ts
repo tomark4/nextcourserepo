@@ -1,3 +1,5 @@
-export * from "./UiContext";
-export * from "./UiProvider";
-export * from "./UiReducer";
+import { UiContext } from "./UiContext";
+import UiProvider from "./UiProvider";
+import { uiReducer } from "./UiReducer";
+
+export { UiContext, UiProvider, uiReducer };
