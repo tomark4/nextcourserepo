@@ -11,29 +11,40 @@ import {
 } from "@mui/material";
 import NextLink from "next/link";
 import { ItemCounter } from "../ui";
-
-const productsInCart = [
-  initialData.products[0],
-  initialData.products[1],
-  initialData.products[2],
-];
+import { useContext } from "react";
+import { CartContext } from "../../context";
+import { ICartProduct } from "../../interfaces/cart";
 
 interface Props {
   editable?: boolean;
 }
 
 const CartList = ({ editable = false }: Props) => {
+  const { cart, updateCartQuantity } = useContext(CartContext);
+
+  const handleNewCartQuantityValue = (
+    product: ICartProduct,
+    newQuantityValue: number
+  ) => {
+    product.qty = newQuantityValue;
+    updateCartQuantity(product);
+  };
+
   return (
     <>
-      {productsInCart.map((item) => (
-        <Grid container key={item.slug} spacing={2} sx={{ mb: 1, mt: 1 }}>
+      {cart.map((item) => (
+        <Grid
+          container
+          key={item.slug + new Date().toString()}
+          spacing={2}
+          sx={{ mb: 1, mt: 1 }}
+        >
           <Grid item xs={3}>
-            {/* TODO: llevar a la pagina del producto */}
-            <NextLink href="/product/slug" passHref>
+            <NextLink href={`/product/${item.slug}`} passHref>
               <Link>
                 <CardActionArea>
                   <CardMedia
-                    image={`/products/${item.images[0]}`}
+                    image={`/products/${item.image}`}
                     component="img"
                     sx={{ borderRadius: "5px" }}
                   />
@@ -45,13 +56,21 @@ const CartList = ({ editable = false }: Props) => {
             <Box display="flex" flexDirection="column">
               <Typography variant="body1">{item.title}</Typography>
               <Typography variant="body1">
-                Talla: <strong>M</strong>
+                Talla: <strong>{item.size}</strong>
               </Typography>
 
               {editable ? (
-                <ItemCounter />
+                <ItemCounter
+                  currentValue={item.qty}
+                  maxValue={10}
+                  onChangeValue={(value: number) =>
+                    handleNewCartQuantityValue(item, value)
+                  }
+                />
               ) : (
-                <Typography variant="subtitle1">3 items</Typography>
+                <Typography variant="subtitle1">
+                  {item.qty} producto{item.qty && "s"}
+                </Typography>
               )}
             </Box>
           </Grid>
