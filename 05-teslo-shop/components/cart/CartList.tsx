@@ -1,5 +1,4 @@
 import React from "react";
-import { initialData } from "../../database/products";
 import {
   Box,
   Button,
@@ -20,7 +19,7 @@ interface Props {
 }
 
 const CartList = ({ editable = false }: Props) => {
-  const { cart, updateCartQuantity } = useContext(CartContext);
+  const { cart, updateCartQuantity, removeProduct } = useContext(CartContext);
 
   const handleNewCartQuantityValue = (
     product: ICartProduct,
@@ -35,7 +34,7 @@ const CartList = ({ editable = false }: Props) => {
       {cart.map((item) => (
         <Grid
           container
-          key={item.slug + new Date().toString()}
+          key={item.slug + item.size}
           spacing={2}
           sx={{ mb: 1, mt: 1 }}
         >
@@ -83,7 +82,11 @@ const CartList = ({ editable = false }: Props) => {
           >
             <Typography variant="subtitle1">$ {`${item.price}`}</Typography>
             {editable && (
-              <Button variant="text" color="secondary">
+              <Button
+                variant="text"
+                color="secondary"
+                onClick={() => removeProduct(item)}
+              >
                 Quitar
               </Button>
             )}

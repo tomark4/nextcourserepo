@@ -76,12 +76,20 @@ const CartProvider = ({ children }: any) => {
     });
   };
 
+  const removeProduct = (product: ICartProduct) => {
+    dispatch({
+      type: "[CART] - REMOVE PRODUCT FROM CART",
+      payload: product,
+    });
+  };
+
   return (
     <CartContext.Provider
       value={{
         ...state,
         addProductToCart,
         updateCartQuantity,
+        removeProduct,
       }}
     >
       {children}
