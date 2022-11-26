@@ -1,7 +1,11 @@
 import { Divider, Grid, Typography } from "@mui/material";
 import React from "react";
+import { useContext } from "react";
+import { CartContext } from "../../context";
+import { formatAsCurrency } from "../../utils/currency";
 
 const OrderSummary = () => {
+  const { numberOfItems, total, subTotal, impuesto } = useContext(CartContext);
   return (
     <Grid container>
       <Grid item xs={6}>
@@ -9,7 +13,9 @@ const OrderSummary = () => {
       </Grid>
 
       <Grid item xs={6} display="flex" justifyContent="end">
-        <Typography>3</Typography>
+        <Typography>
+          {numberOfItems} {numberOfItems > 1 ? "Items" : "Item"}
+        </Typography>
       </Grid>
 
       <Grid item xs={6}>
@@ -17,15 +23,17 @@ const OrderSummary = () => {
       </Grid>
 
       <Grid item xs={6} display="flex" justifyContent="end">
-        <Typography>$ 305.00</Typography>
+        <Typography>{formatAsCurrency(subTotal)}</Typography>
       </Grid>
 
       <Grid item xs={6}>
-        <Typography>Impuesto</Typography>
+        <Typography>
+          Impuesto ({Number(process.env.NEXT_PUBLIC_TAX_RATE) * 100} %)
+        </Typography>
       </Grid>
 
       <Grid item xs={6} display="flex" justifyContent="end">
-        <Typography>$ 30.00</Typography>
+        <Typography>{formatAsCurrency(impuesto)}</Typography>
       </Grid>
 
       <Grid item xs={6}>
@@ -33,7 +41,7 @@ const OrderSummary = () => {
       </Grid>
 
       <Grid item xs={6} display="flex" justifyContent="end">
-        <Typography>$ 335.00</Typography>
+        <Typography>{formatAsCurrency(total)}</Typography>
       </Grid>
     </Grid>
   );

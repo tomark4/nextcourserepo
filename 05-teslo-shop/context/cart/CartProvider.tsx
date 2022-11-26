@@ -6,10 +6,18 @@ import Cookie from "js-cookie";
 // interface state
 export interface CartState {
   cart: ICartProduct[];
+  numberOfItems: number;
+  subTotal: number;
+  impuesto: number;
+  total: number;
 }
 
 const initialState: CartState = {
   cart: [],
+  numberOfItems: 0,
+  subTotal: 0,
+  impuesto: 0,
+  total: 0,
 };
 
 const CartProvider = ({ children }: any) => {
@@ -32,6 +40,28 @@ const CartProvider = ({ children }: any) => {
 
   useEffect(() => {
     Cookie.set("cart", JSON.stringify(state.cart));
+  }, [state.cart]);
+
+  useEffect(() => {
+    let subTotal = state.cart.reduce(
+      (prev, current) => current.price * current.qty + prev,
+      0
+    );
+    let taxRate = Number(process.env.NEXT_PUBLIC_TAX_RATE || 0.15);
+    let impuesto = subTotal * taxRate;
+    let total = subTotal + impuesto;
+
+    const orderSummary = {
+      numberOfItems: state.cart.reduce(
+        (prev, current) => current.qty + prev,
+        0
+      ),
+      subTotal,
+      impuesto,
+      total,
+    };
+
+    dispatch({ type: "[CART] - Update order summary", payload: orderSummary });
   }, [state.cart]);
 
   const addProductToCart = (product: ICartProduct) => {
