@@ -61,7 +61,7 @@ const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     token,
     user: {
       name: user.name,
-      email: user.name,
+      email: user.email,
       role: user.name,
     },
   });
