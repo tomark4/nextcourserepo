@@ -1,8 +1,19 @@
 import { AuthLayout } from "../../components/layouts";
-import { Box, Grid, TextField, Typography, Button, Link } from "@mui/material";
+import {
+  Box,
+  Grid,
+  TextField,
+  Typography,
+  Button,
+  Link,
+  Chip,
+} from "@mui/material";
 import NextLink from "next/link";
 import { useForm } from "react-hook-form";
 import validator from "validator";
+import tesloApi from "../../api/teslo-api";
+import { ErrorOutline } from "@mui/icons-material";
+import { useState } from "react";
 
 type Inputs = {
   email: string;
@@ -10,16 +21,28 @@ type Inputs = {
 };
 
 const LoginPage = () => {
+  const [error, setError] = useState(false);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
 
-  console.log(errors);
-
-  const onLoginUser = (values: Inputs) => {
-    console.log(values);
+  const onLoginUser = async ({ email, password }: Inputs) => {
+    try {
+      setError(false);
+      const { data } = await tesloApi.post("/user/login", { email, password });
+      const { token, user } = data;
+      console.log(token, user);
+      // TODO: navigate to user screen previous
+    } catch (e) {
+      setError(true);
+      console.error("Error en las credenciales", e);
+      setTimeout(() => {
+        setError(false);
+      }, 3000);
+    }
   };
 
   return (
@@ -31,6 +54,16 @@ const LoginPage = () => {
               <Typography variant="h1" component="h1">
                 Login
               </Typography>
+              {error && (
+                <Box mt={2}>
+                  <Chip
+                    label="User or password invalid"
+                    color="error"
+                    icon={<ErrorOutline />}
+                    className="fadeIn"
+                  />
+                </Box>
+              )}
             </Grid>
             <Grid item xs={12} mt={2}>
               <TextField
