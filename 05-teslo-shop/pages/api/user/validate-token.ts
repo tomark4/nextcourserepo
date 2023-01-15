@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../database";
 import User from "../../../models/user";
-import bcrypt from "bcryptjs";
 import { isValidToken, signToken } from "../../../utils/jwt";
 
 type Data =
@@ -34,32 +33,39 @@ export default function handler(
 }
 
 const checkJWT = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const bearerToken = req.headers.authorization?.split(" ")[1];
+  // const bearerToken = req.headers.authorization?.split(" ")[1];
+
+  const { token = "" } = req.cookies;
+
+  console.log(req.cookies);
 
   let userId = "";
-  await db.connect();
 
   try {
-    userId = await isValidToken(bearerToken || "");
-    const user = await User.findById(userId).lean();
-
-    if (!user) {
-      await db.disconnect();
-      return res.status(400).json({ message: "User does not exist" });
-    }
-
-    const token = signToken({ _id: user._id, email: user.email });
-
-    return res.status(200).json({
-      message: "Success",
-      token,
-      user: {
-        name: user.name,
-        email: user.email,
-        role: user.name,
-      },
-    });
+    userId = await isValidToken(token);
   } catch (e) {
-    return res.status(401).json({ message: "Token not valid" });
+    return res.status(401).json({
+      message: "Token de autorización no es válido",
+    });
   }
+
+  await db.connect();
+  const user = await User.findById(userId).lean();
+  await db.disconnect();
+
+  if (!user) {
+    return res.status(400).json({ message: "User does not exist" });
+  }
+
+  const { _id, email, role, name } = user;
+
+  return res.status(200).json({
+    message: "Success",
+    token: signToken({ _id, email }),
+    user: {
+      name: name,
+      email: email,
+      role: name,
+    },
+  });
 };

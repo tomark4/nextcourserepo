@@ -1,6 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import React, { useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import tesloApi from "../../api/teslo-api";
 import { IUser } from "../../interfaces";
 import { AuthContext, authReducer } from "./";
@@ -22,6 +22,22 @@ export interface PayloadRegister {
 
 export const AuthProvider = ({ children }: any) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+
+  useEffect(() => {
+    console.log("here", Cookies.get("token"));
+    checkToken();
+  }, []);
+
+  const checkToken = async () => {
+    try {
+      const { data } = await tesloApi.get("/user/validate-token");
+      const { token, user } = data;
+      Cookies.set("token", token);
+      dispatch({ type: "LOGIN", payload: user });
+    } catch (e: any) {
+      Cookies.remove("token");
+    }
+  };
 
   const loginUser = async (
     email: string,
