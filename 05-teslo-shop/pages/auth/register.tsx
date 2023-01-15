@@ -11,9 +11,10 @@ import {
 import NextLink from "next/link";
 import { useForm } from "react-hook-form";
 import validator from "validator";
-import tesloApi from "../../api/teslo-api";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { ErrorOutline } from "@mui/icons-material";
+import { useRouter } from "next/router";
+import { AuthContext } from "../../context";
 
 type FormData = {
   name: string;
@@ -23,20 +24,24 @@ type FormData = {
 
 const RegisterPage = () => {
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const router = useRouter();
+  const { registerUser } = useContext(AuthContext);
 
   const onRegisterForm = async (payload: FormData) => {
-    try {
-      setError(false);
-      const { data } = await tesloApi.post("/user/register", payload);
-      console.log(data);
-      // TODO: navigate to user screen previous
-    } catch (e) {
+    setError(false);
+    const resp = await registerUser(payload);
+    const { hasError, message } = resp;
+    if (hasError) {
       setError(true);
-      console.error("Error en las credenciales", e);
+      setErrorMessage(message || "");
       setTimeout(() => {
         setError(false);
       }, 3000);
+      return;
     }
+
+    router.replace("/");
   };
 
   const {
@@ -57,7 +62,7 @@ const RegisterPage = () => {
               {error && (
                 <Box mt={2}>
                   <Chip
-                    label="Error during register"
+                    label={errorMessage}
                     color="error"
                     icon={<ErrorOutline />}
                     className="fadeIn"
