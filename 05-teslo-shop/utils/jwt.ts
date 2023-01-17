@@ -18,6 +18,10 @@ export const isValidToken = (token: string): Promise<string> => {
     throw new Error("Can't read secret key");
   }
 
+  if (token.length <= 10) {
+    Promise.reject("JWT not valid");
+  }
+
   return new Promise((resolve, reject) => {
     try {
       jwt.verify(token, process.env.JWT_SECRET || "", (err, payload) => {

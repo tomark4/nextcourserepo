@@ -62,7 +62,7 @@ const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     user: {
       name: user.name,
       email: user.email,
-      role: user.name,
+      role: user.role,
     },
   });
 };

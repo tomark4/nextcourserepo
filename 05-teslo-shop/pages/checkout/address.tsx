@@ -2,14 +2,9 @@ import { ShopLayout } from "../../components/layouts";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Button,
-  Box,
-} from "@mui/material";
+import { FormControl, MenuItem, Select, Button, Box } from "@mui/material";
+import { GetServerSideProps } from "next";
+import { isValidToken } from "../../utils/jwt";
 
 const AddressPage = () => {
   return (
@@ -71,6 +66,29 @@ const AddressPage = () => {
       </Box>
     </ShopLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const { token = "" } = req.cookies;
+  let tokenValid = false;
+
+  try {
+    await isValidToken(token);
+    tokenValid = true;
+  } catch (e) {
+    tokenValid = false;
+  }
+
+  if (!tokenValid) {
+    return {
+      redirect: {
+        destination: "/auth/login?page=/checkout/address",
+        permanent: false,
+      },
+    };
+  }
+
+  return { props: {} };
 };
 
 export default AddressPage;

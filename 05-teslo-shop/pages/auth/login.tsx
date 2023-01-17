@@ -11,7 +11,6 @@ import {
 import NextLink from "next/link";
 import { useForm } from "react-hook-form";
 import validator from "validator";
-import tesloApi from "../../api/teslo-api";
 import { ErrorOutline } from "@mui/icons-material";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context";
@@ -43,9 +42,8 @@ const LoginPage = () => {
       }, 3000);
       return;
     }
-
-    router.replace("/");
-    // TODO: navigate to user screen previous
+    const destination = router.query.page?.toString() || "/";
+    router.replace(destination);
   };
 
   return (
@@ -113,7 +111,14 @@ const LoginPage = () => {
               </Button>
             </Grid>
             <Grid item xs={12} mt={2} display="flex" justifyContent="end">
-              <NextLink href="/auth/register" passHref>
+              <NextLink
+                href={
+                  router.query.page
+                    ? `/auth/register?page=${router.query.page}`
+                    : "/auth/register"
+                }
+                passHref
+              >
                 <Link underline="always">Crear cuenta</Link>
               </NextLink>
             </Grid>

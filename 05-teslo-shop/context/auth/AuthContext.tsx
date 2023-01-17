@@ -9,6 +9,7 @@ interface ContextProps {
   registerUser: (
     payload: PayloadRegister
   ) => Promise<{ hasError: boolean; message?: string }>;
+  logout: () => void;
 }
 
 export const AuthContext = createContext({} as ContextProps);

@@ -34,7 +34,7 @@ export const cartReducer = (state: CartState, action: CardActionType) => {
       return { ...state, cart: action.payload };
 
     case "[CART] - LOAD FROM COOKIES | STORAGE ":
-      return { ...state, cart: action.payload };
+      return { ...state, isLoaded: true, cart: action.payload };
 
     case "[CART] - CHANGE PRODUCT QTY":
       return {
