@@ -7,6 +7,8 @@ import { countries } from "../../database/countries";
 import { useForm } from "react-hook-form";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
+import { useContext } from "react";
+import { CartContext } from "../../context";
 
 interface FormValue {
   name: string;
@@ -44,10 +46,10 @@ const AddressPage = () => {
   } = useForm<FormValue>({
     defaultValues: getAddresFromCookies(),
   });
+  const { updateShippingAddress } = useContext(CartContext);
 
   const handleSubmitForm = (values: FormValue) => {
-    console.log(values);
-    Cookies.set("shippingAddress", JSON.stringify(values));
+    updateShippingAddress(values);
     router.push("/checkout/summary");
   };
 

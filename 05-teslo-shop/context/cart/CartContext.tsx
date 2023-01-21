@@ -12,6 +12,7 @@ interface ContextProps {
   addProductToCart: (product: ICartProduct) => void;
   updateCartQuantity: (product: ICartProduct) => void;
   removeProduct: (product: ICartProduct) => void;
+  updateShippingAddress: (shippingAddress: ShippingAddress) => void;
   isLoaded: boolean;
 }
 

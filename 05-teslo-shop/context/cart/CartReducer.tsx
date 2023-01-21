@@ -30,6 +30,10 @@ type CardActionType =
   | {
       type: "[CART] - LOAD ADDRESS COOKIES";
       payload: ShippingAddress;
+    }
+  | {
+      type: "[CART] - UPDATE SHIPPING ADDRESS";
+      payload: ShippingAddress;
     };
 
 export const cartReducer = (state: CartState, action: CardActionType) => {
@@ -67,6 +71,7 @@ export const cartReducer = (state: CartState, action: CardActionType) => {
       };
 
     case "[CART] - LOAD ADDRESS COOKIES":
+    case "[CART] - UPDATE SHIPPING ADDRESS":
       return { ...state, shippingAddress: action.payload };
 
     default:

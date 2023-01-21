@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { ShopLayout } from "../../components/layouts";
 import {
   Card,
@@ -12,8 +12,15 @@ import {
 } from "@mui/material";
 import { CartList, OrderSummary } from "../../components/cart";
 import NextLink from "next/link";
+import { CartContext } from "../../context";
 
 const SummaryPage = () => {
+  const { shippingAddress, numberOfItems } = useContext(CartContext);
+
+  if (!shippingAddress) {
+    return <></>;
+  }
+
   return (
     <ShopLayout title="Carrito - 3" pageDescription="Carrito de compras">
       <Typography variant="h1" component="h1">
@@ -26,7 +33,9 @@ const SummaryPage = () => {
         <Grid item xs={12} sm={5}>
           <Card className="summary-card">
             <CardContent>
-              <Typography variant="h1">Resumen (3 Productos)</Typography>
+              <Typography variant="h1">
+                Resumen ({numberOfItems} Producto{numberOfItems > 1 ? "s" : ""})
+              </Typography>
               <Divider sx={{ my: 1 }} />
 
               <Box display="flex" justifyContent="space-between" sx={{ mb: 2 }}>
@@ -38,11 +47,21 @@ const SummaryPage = () => {
                 </NextLink>
               </Box>
 
-              <Typography>Jose Quintero</Typography>
-              <Typography>Caracas</Typography>
-              <Typography>Miranda</Typography>
-              <Typography>Venezuela</Typography>
-              <Typography>+581235654654</Typography>
+              {shippingAddress && (
+                <Box mt={1}>
+                  <Typography>
+                    {shippingAddress.name} {shippingAddress.lastName}
+                  </Typography>
+                  <Typography>
+                    {shippingAddress.address} {shippingAddress.address2}
+                  </Typography>
+                  <Typography>
+                    {shippingAddress.city} {shippingAddress.country}
+                  </Typography>
+                  <Typography>{shippingAddress.zipCode}</Typography>
+                  <Typography>{shippingAddress.phone}</Typography>
+                </Box>
+              )}
 
               <Divider sx={{ mt: 1 }} />
 

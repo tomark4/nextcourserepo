@@ -2,6 +2,7 @@ import React, { useEffect, useReducer } from "react";
 import { ICartProduct } from "../../interfaces";
 import { CartContext, cartReducer } from "./";
 import Cookie from "js-cookie";
+import Cookies from "js-cookie";
 
 // interface state
 export interface CartState {
@@ -141,6 +142,15 @@ const CartProvider = ({ children }: any) => {
     });
   };
 
+  const updateShippingAddress = (shippingAddress: ShippingAddress) => {
+    Cookies.set("shippingAddress", JSON.stringify(shippingAddress));
+
+    dispatch({
+      type: "[CART] - UPDATE SHIPPING ADDRESS",
+      payload: shippingAddress,
+    });
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -148,6 +158,7 @@ const CartProvider = ({ children }: any) => {
         addProductToCart,
         updateCartQuantity,
         removeProduct,
+        updateShippingAddress,
       }}
     >
       {children}
