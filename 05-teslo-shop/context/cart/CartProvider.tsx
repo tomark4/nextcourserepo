@@ -11,6 +11,18 @@ export interface CartState {
   impuesto: number;
   total: number;
   isLoaded: boolean;
+  shippingAddress?: ShippingAddress;
+}
+
+export interface ShippingAddress {
+  name: string;
+  lastName: string;
+  phone: string;
+  address: string;
+  country: string;
+  city: string;
+  zipCode: string;
+  address2?: string;
 }
 
 const initialState: CartState = {
@@ -20,6 +32,7 @@ const initialState: CartState = {
   impuesto: 0,
   total: 0,
   isLoaded: false,
+  shippingAddress: undefined,
 };
 
 const CartProvider = ({ children }: any) => {
@@ -65,6 +78,19 @@ const CartProvider = ({ children }: any) => {
 
     dispatch({ type: "[CART] - Update order summary", payload: orderSummary });
   }, [state.cart]);
+
+  useEffect(() => {
+    // store shipping address in context
+    if (Cookie.get("shippingAddress")) {
+      let shippingAddress = Cookie.get("shippingAddress")
+        ? JSON.parse(Cookie.get("shippingAddress")!)
+        : {};
+      dispatch({
+        type: "[CART] - LOAD ADDRESS COOKIES",
+        payload: shippingAddress,
+      });
+    }
+  }, []);
 
   const addProductToCart = (product: ICartProduct) => {
     const productInCart = state.cart.some((item) => item._id === product._id);
