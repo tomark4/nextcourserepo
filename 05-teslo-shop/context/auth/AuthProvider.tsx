@@ -81,6 +81,7 @@ export const AuthProvider = ({ children }: any) => {
   const logout = () => {
     Cookies.remove("token");
     Cookies.remove("cart");
+    Cookies.remove("shippingAddress");
     router.reload();
   };
 
