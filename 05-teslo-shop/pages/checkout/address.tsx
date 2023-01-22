@@ -39,12 +39,13 @@ const getAddresFromCookies = (): FormValue => {
 
 const AddressPage = () => {
   const router = useRouter();
+  const initialData = getAddresFromCookies();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValue>({
-    defaultValues: getAddresFromCookies(),
+    defaultValues: initialData,
   });
   const { updateShippingAddress } = useContext(CartContext);
 
@@ -144,7 +145,7 @@ const AddressPage = () => {
                 select
                 variant="filled"
                 label="Pais"
-                defaultValue={countries[0].code}
+                defaultValue={initialData.country || countries[0].code}
                 error={!!errors.country}
                 {...register("country", {
                   required: "Country is required",

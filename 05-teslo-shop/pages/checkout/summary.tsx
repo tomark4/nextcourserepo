@@ -13,6 +13,7 @@ import {
 import { CartList, OrderSummary } from "../../components/cart";
 import NextLink from "next/link";
 import { CartContext } from "../../context";
+import { getCountryName } from "../../utils/countries";
 
 const SummaryPage = () => {
   const { shippingAddress, numberOfItems } = useContext(CartContext);
@@ -56,7 +57,8 @@ const SummaryPage = () => {
                     {shippingAddress.address} {shippingAddress.address2}
                   </Typography>
                   <Typography>
-                    {shippingAddress.city} {shippingAddress.country}
+                    {shippingAddress.city}{" "}
+                    {getCountryName(shippingAddress.country)}
                   </Typography>
                   <Typography>{shippingAddress.zipCode}</Typography>
                   <Typography>{shippingAddress.phone}</Typography>
