@@ -156,7 +156,9 @@ const SideMenu = () => {
           {!isLoggedIn ? (
             <ListItem
               button
-              onClick={() => navigateTo(`/auth/login?page=${router.asPath}`)}
+              onClick={() =>
+                navigateTo(`/api/auth/signin?page=${router.asPath}`)
+              }
             >
               <ListItemIcon>
                 <VpnKeyOutlined />

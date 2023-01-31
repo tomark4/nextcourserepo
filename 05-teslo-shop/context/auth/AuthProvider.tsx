@@ -5,7 +5,7 @@ import React, { useEffect, useReducer } from "react";
 import tesloApi from "../../api/teslo-api";
 import { IUser } from "../../interfaces";
 import { AuthContext, authReducer } from "./";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 export interface AuthState {
   isLoggedIn: boolean;
@@ -30,8 +30,7 @@ export const AuthProvider = ({ children }: any) => {
   useEffect(() => {
     if (status === "authenticated") {
       console.log(data);
-      // TODO: here change payload
-      // dispatch({ type: "LOGIN", payload: data?.user as IUser });
+      dispatch({ type: "LOGIN", payload: data?.user as IUser });
     }
   }, [status, data]);
 
@@ -89,9 +88,10 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const logout = () => {
-    Cookies.remove("token");
     Cookies.remove("cart");
     Cookies.remove("shippingAddress");
+    // Cookies.remove("token");
+    signOut();
     router.reload();
   };
 
