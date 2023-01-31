@@ -1,4 +1,12 @@
-export * as db from "./db";
-export * as dbProducts from "./db-products";
-export * from "./constants";
-export * as dbUsers from "./dbUsers";
+
+
+export * as db from './db';
+export * as dbProducts from './dbProducts';
+export * as dbUsers from './dbUsers';
+export * from './constants';
+
+
+
+// Base de datos de prueba
+export * as seedDatabase from './seed-data';
+

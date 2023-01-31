@@ -1,42 +1,40 @@
-import axios from "axios";
-import Cookies from "js-cookie";
+import { FC, useReducer, useEffect } from "react";
 import { useRouter } from "next/router";
-import React, { useEffect, useReducer } from "react";
-import tesloApi from "../../api/teslo-api";
-import { IUser } from "../../interfaces";
-import { AuthContext, authReducer } from "./";
 import { useSession, signOut } from "next-auth/react";
+
+import Cookies from "js-cookie";
+import axios from "axios";
+
+import { AuthContext, authReducer } from "./";
+
+import { tesloApi } from "../../api";
+import { IUser } from "../../interfaces";
 
 export interface AuthState {
   isLoggedIn: boolean;
   user?: IUser;
 }
 
-const initialState: AuthState = {
+const AUTH_INITIAL_STATE: AuthState = {
   isLoggedIn: false,
+  user: undefined,
 };
 
-export interface PayloadRegister {
-  name: string;
-  email: string;
-  password: string;
-}
-
-export const AuthProvider = ({ children }: any) => {
-  const [state, dispatch] = useReducer(authReducer, initialState);
-  const router = useRouter();
+export const AuthProvider: FC = ({ children }: any) => {
+  const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
   const { data, status } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
     if (status === "authenticated") {
-      console.log(data);
-      dispatch({ type: "LOGIN", payload: data?.user as IUser });
+      console.log({ user: data?.user });
+      dispatch({ type: "[Auth] - Login", payload: data?.user as IUser });
     }
   }, [status, data]);
 
-  useEffect(() => {
-    checkToken();
-  }, []);
+  // useEffect(() => {
+  //     checkToken();
+  // }, [])
 
   const checkToken = async () => {
     if (!Cookies.get("token")) {
@@ -47,8 +45,8 @@ export const AuthProvider = ({ children }: any) => {
       const { data } = await tesloApi.get("/user/validate-token");
       const { token, user } = data;
       Cookies.set("token", token);
-      dispatch({ type: "LOGIN", payload: user });
-    } catch (e: any) {
+      dispatch({ type: "[Auth] - Login", payload: user });
+    } catch (error) {
       Cookies.remove("token");
     }
   };
@@ -61,42 +59,72 @@ export const AuthProvider = ({ children }: any) => {
       const { data } = await tesloApi.post("/user/login", { email, password });
       const { token, user } = data;
       Cookies.set("token", token);
-      dispatch({ type: "LOGIN", payload: user });
+      dispatch({ type: "[Auth] - Login", payload: user });
       return true;
-    } catch (e: any) {
+    } catch (error) {
       return false;
     }
   };
 
   const registerUser = async (
-    payload: PayloadRegister
+    name: string,
+    email: string,
+    password: string
   ): Promise<{ hasError: boolean; message?: string }> => {
     try {
-      const { data } = await tesloApi.post("/user/register", payload);
+      const { data } = await tesloApi.post("/user/register", {
+        name,
+        email,
+        password,
+      });
       const { token, user } = data;
       Cookies.set("token", token);
-      dispatch({ type: "LOGIN", payload: user });
-      return { hasError: false };
-    } catch (e) {
-      if (axios.isAxiosError(e)) {
-        // axios error
-        return { hasError: true, message: e.response?.data.message };
+      dispatch({ type: "[Auth] - Login", payload: user });
+      return {
+        hasError: false,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          hasError: true,
+          message: error.response?.data.message,
+        };
       }
 
-      return { hasError: true, message: "Error: user not created" };
+      return {
+        hasError: true,
+        message: "No se pudo crear el usuario - intente de nuevo",
+      };
     }
   };
 
   const logout = () => {
     Cookies.remove("cart");
-    Cookies.remove("shippingAddress");
-    // Cookies.remove("token");
+    Cookies.remove("firstName");
+    Cookies.remove("lastName");
+    Cookies.remove("address");
+    Cookies.remove("address2");
+    Cookies.remove("zip");
+    Cookies.remove("city");
+    Cookies.remove("country");
+    Cookies.remove("phone");
+
     signOut();
-    router.reload();
+    // router.reload();
+    // Cookies.remove('token');
   };
 
   return (
-    <AuthContext.Provider value={{ ...state, loginUser, registerUser, logout }}>
+    <AuthContext.Provider
+      value={{
+        ...state,
+
+        // Methods
+        loginUser,
+        registerUser,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

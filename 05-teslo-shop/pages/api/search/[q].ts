@@ -1,46 +1,52 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../../../database";
-import { Product as ProductI } from "../../../interfaces";
-import { Product as ProductModel } from "../../../models";
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { db } from '../../../database';
+import { IProduct } from '../../../interfaces';
+import { Product } from '../../../models';
 
-type Data =
-  | {
-      message: string;
+type Data = 
+| { message: string }
+| IProduct[]
+
+export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+
+    switch( req.method ) {
+
+        case 'GET':
+            return searchProducts( req, res )
+
+        default:
+            return res.status(400).json({
+                message: 'Bad request'
+            });
     }
-  | ProductI[];
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
-  switch (req.method) {
-    case "GET":
-      return searchProduct(req, res);
-
-    default:
-      return res.status(400).json({ message: "Bad request" });
-  }
+    
 }
 
-async function searchProduct(req: NextApiRequest, res: NextApiResponse<Data>) {
-  let { q = "" } = req.query;
+const searchProducts = async(req: NextApiRequest, res: NextApiResponse<Data>) => {
+    
+    let { q = '' } = req.query;
 
-  if (q.length === 0) {
-    return res.status(400).json({ message: "Enter your search params" });
-  }
+    if ( q.length === 0 ) {
+        return res.status(400).json({
+            message: 'Debe de especificar el query de búsqueda'
+        })
+    }
 
-  q = String(q).toLowerCase();
+    q = q.toString().toLowerCase();
 
-  await db.connect();
-  try {
-    const products = await ProductModel.find({
-      $text: { $search: q },
+    await db.connect();
+    const products = await Product.find({
+        $text: { $search: q }
     })
-      .select("title images price inStock slug -_id")
-      .lean();
+    .select('title images price inStock slug -_id')
+    .lean();
+
+
     await db.disconnect();
-    return res.json(products);
-  } catch (e) {
-    return res.status(500).json({ message: "There was an error" });
-  }
+
+
+
+
+    return res.status(200).json(products);
 }

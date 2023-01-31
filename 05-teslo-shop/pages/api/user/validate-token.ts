@@ -1,71 +1,68 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../../../database";
-import User from "../../../models/user";
-import { isValidToken, signToken } from "../../../utils/jwt";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import bcrypt from 'bcryptjs';
 
-type Data =
-  | {
-      message: string;
-    }
-  | {
-      message: string;
-      token: string;
-      user: {
-        name: string;
+import { db } from '../../../database';
+import { User } from '../../../models';
+import { jwt } from '../../../utils';
+
+type Data = 
+| { message: string }
+| {
+    token: string;
+    user: {
         email: string;
+        name: string;
         role: string;
-      };
-    };
-
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
-  switch (req.method) {
-    case "GET":
-      return checkJWT(req, res);
-
-    default:
-      return res.status(400).json({
-        message: "Bad request",
-      });
-  }
+    }
 }
 
-const checkJWT = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  // const bearerToken = req.headers.authorization?.split(" ")[1];
+export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+    
+    switch( req.method ) {
+        case 'GET':
+            return checkJWT(req, res)
 
-  const { token = "" } = req.cookies;
+        default:
+            res.status(400).json({
+                message: 'Bad request'
+            })
+    }
+}
 
-  console.log(req.cookies);
+const checkJWT = async(req: NextApiRequest, res: NextApiResponse<Data>) => {
+    
+    const { token = ''  } = req.cookies;
 
-  let userId = "";
+    let userId = '';
 
-  try {
-    userId = await isValidToken(token);
-  } catch (e) {
-    return res.status(401).json({
-      message: "Token de autorización no es válido",
-    });
-  }
+    try {
+        userId = await jwt.isValidToken( token );
 
-  await db.connect();
-  const user = await User.findById(userId).lean();
-  await db.disconnect();
+    } catch (error) {
+        return res.status(401).json({
+            message: 'Token de autorización no es válido'
+        })   
+    }
 
-  if (!user) {
-    return res.status(400).json({ message: "User does not exist" });
-  }
 
-  const { _id, email, role, name } = user;
+    await db.connect();
+    const user = await User.findById( userId ).lean();
+    await db.disconnect();
 
-  return res.status(200).json({
-    message: "Success",
-    token: signToken({ _id, email }),
-    user: {
-      name: name,
-      email: email,
-      role: name,
-    },
-  });
-};
+    if ( !user ) {
+        return res.status(400).json({ message: 'No existe usuario con ese id' })
+    }
+
+    const { _id, email, role, name } = user;
+
+    return res.status(200).json({
+        token: jwt.signToken( _id, email ),
+        user: {
+            email, 
+            role, 
+            name
+        }
+    })
+
+
+}

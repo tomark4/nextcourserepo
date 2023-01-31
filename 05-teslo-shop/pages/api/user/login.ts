@@ -1,68 +1,60 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../../../database";
-import User from "../../../models/user";
-import bcrypt from "bcryptjs";
-import { signToken } from "../../../utils/jwt";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import bcrypt from 'bcryptjs';
 
-type Data =
-  | {
-      message: string;
-    }
-  | {
-      message: string;
-      token: string;
-      user: {
-        name: string;
+import { db } from '../../../database';
+import { User } from '../../../models';
+import { jwt } from '../../../utils';
+
+type Data = 
+| { message: string }
+| {
+    token: string;
+    user: {
         email: string;
+        name: string;
         role: string;
-      };
-    };
-
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
-  switch (req.method) {
-    case "POST":
-      return loginUser(req, res);
-
-    default:
-      return res.status(400).json({
-        message: "Bad request",
-      });
-  }
+    }
 }
 
-const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const { email = "", password = "" } = req.body;
-  await db.connect();
-  const user = await User.findOne({ email });
+export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+    
+    switch( req.method ) {
+        case 'POST':
+            return loginUser(req, res)
 
-  if (!user) {
-    // if user doesn't exists;
-    return res.status(400).json({
-      message: "Email or password invalid - e",
-    });
-  }
+        default:
+            res.status(400).json({
+                message: 'Bad request'
+            })
+    }
+}
 
-  if (!bcrypt.compareSync(password, user.password!)) {
-    // if password is invalid
-    return res.status(400).json({
-      message: "Email or password invalid - p",
-    });
-  }
+const loginUser = async(req: NextApiRequest, res: NextApiResponse<Data>) => {
+    
+    const { email = '', password = ''  } = req.body;
 
-  await db.disconnect();
+    await db.connect();
+    const user = await User.findOne({ email });
+    await db.disconnect();
 
-  const token = signToken({ _id: user._id, email: user.email });
+    if ( !user ) {
+        return res.status(400).json({ message: 'Correo o contraseña no válidos - EMAIL' })
+    }
+    
+    if ( !bcrypt.compareSync( password, user.password! ) ) {
+        return res.status(400).json({ message: 'Correo o contraseña no válidos - Password' })
+    }
 
-  return res.status(200).json({
-    message: "Success",
-    token,
-    user: {
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    },
-  });
-};
+    const { role, name, _id } = user;
+
+    const token = jwt.signToken( _id, email );
+
+    return res.status(200).json({
+        token, //jwt
+        user: {
+            email, role, name
+        }
+    })
+
+
+}
