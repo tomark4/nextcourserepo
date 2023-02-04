@@ -1,4 +1,4 @@
-import { FC, useReducer, useEffect } from "react";
+import { useReducer, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSession, signOut } from "next-auth/react";
 
@@ -20,7 +20,7 @@ const AUTH_INITIAL_STATE: AuthState = {
   user: undefined,
 };
 
-export const AuthProvider: FC = ({ children }: any) => {
+export const AuthProvider = ({ children }: any) => {
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
   const { data, status } = useSession();
   const router = useRouter();
@@ -110,16 +110,12 @@ export const AuthProvider: FC = ({ children }: any) => {
     Cookies.remove("phone");
 
     signOut();
-    // router.reload();
-    // Cookies.remove('token');
   };
 
   return (
     <AuthContext.Provider
       value={{
         ...state,
-
-        // Methods
         loginUser,
         registerUser,
         logout,
